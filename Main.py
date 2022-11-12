@@ -148,9 +148,9 @@ gInicial = copy.deepcopy(g)
 # g.agregar_arista("I", "K", 4, False)
 
 
-g.CaminoCortoJavierAndreina("54-14", "52-13", "54-11")
+g.CaminoCortoJavierAndreina("54-14", "52-13", "50-14")
 
-
+# g.imprimir_matriz(g.matriz, False)
 # Encontrar la matriz de Andreina
 # for i in range(gInicial.matriz.__len__()):
 #     for a in range(gInicial.matriz[i].__len__()):

@@ -1,4 +1,5 @@
 import math
+import copy
 
 
 class Grafo:
@@ -318,8 +319,8 @@ class Grafo:
 
     # Se hace doble Dijkstra y se modifican las matrices
     def CaminoCortoJavierAndreina(self, inicioJavier, inicioAndreina, fin):
-        g = self
-
+        g = copy.deepcopy(self)
+        grafoSegundaVuelta = copy.deepcopy(self)
         gd = g.DijikstraGrafo(inicioJavier, fin)
         gdPesos = gd.PesosDijikstra(inicioJavier)
         # print(gPesos)
@@ -329,6 +330,8 @@ class Grafo:
         print("El camino mas corto para Javier es de" +
               " " + str(gdPesos[gdPesos.__len__()-1]))
 
+        # Guarda el peso de Javier recorrido 1
+        gdPesos1 = gdPesos[gdPesos.__len__()-1]
         # Se hace para cololar los nodos ya visitados por Javier
         # Que no sean visitados por Andreina
         for i in gd.vertices:
@@ -343,26 +346,98 @@ class Grafo:
         print("-------------------------")
 
         # Matriz con los pesos de Andreina
-        for i in range(g.matriz.__len__()):
-            for a in range(g.matriz[i].__len__()):
-                if g.matriz[i][a] != None and g.matriz[i][a] != 999:
-                    g.matriz[i][a] += 2
+        # for i in range(g.matriz.__len__()):
+        #     for a in range(g.matriz[i].__len__()):
+        #         if g.matriz[i][a] != None and g.matriz[i][a] != 999:
+        #             g.matriz[i][a] += 2
 
         print("Camino mas corto Andreina: ")
         gd2 = g.DijikstraGrafo(inicioAndreina, fin)
         pesosg2 = gd2.PesosDijikstra(inicioAndreina)
         print(gd2.vertices)
         print("El camino mas corto para Andreina es de " +
-              " "+str(pesosg2[pesosg2.__len__()-1]))
+              " "+str(pesosg2[pesosg2.__len__()-1]+(2*pesosg2.__len__()-2)))
+        # Guarda el peso de Andreina Recorrido 1
+        gdPesos2 = pesosg2[pesosg2.__len__()-1]+(2*pesosg2.__len__()-2)
         # print(gd2.PesosDijikstra(inicioAndreina))
 
-        if gdPesos[gdPesos.__len__()-1] > pesosg2[pesosg2.__len__()-1]:
-            resta = gdPesos[gdPesos.__len__()-1] - pesosg2[pesosg2.__len__()-1]
+        if gdPesos1 > gdPesos2:
+            resta1 = gdPesos1 - gdPesos2
+            resultado1 = "Para que puedan llegar iguales Andreina debe salir " + \
+                str(resta1) + " minutos antes que Javier"
             print("Para que puedan llegar iguales Andreina debe salir " +
-                  str(resta) + " minutos antes que Javier")
-        elif gdPesos[gdPesos.__len__()-1] < pesosg2[pesosg2.__len__()-1]:
-            resta = pesosg2[pesosg2.__len__()-1] - gdPesos[gdPesos.__len__()-1]
+                  str(resta1) + " minutos antes que Javier")
+
+        elif gdPesos1 < gdPesos2:
+            resta1 = gdPesos2 - gdPesos1
+            resultado1 = "Para que puedan llegar iguales, Javier debe salir " + \
+                str(resta1) + " minutos antes que Andreina"
             print("Para que puedan llegar iguales, Javier debe salir " +
-                  str(resta) + " minutos antes que Andreina")
+                  str(resta1) + " minutos antes que Andreina")
         else:
+            resultado1 = "Para que puedan llegar iguales pueden salir al mismo tiempo"
             print("Para que puedan llegar iguales pueden salir al mismo tiempo")
+
+        print("--------------------SEGUNDA VUELTA--------------------")
+        # Comienza con Andreina
+        gdSegundaVuelta = grafoSegundaVuelta.DijikstraGrafo(
+            inicioAndreina, fin)
+        pesosgdSegundaVuelta = gdSegundaVuelta.PesosDijikstra(inicioAndreina)
+        print(gdSegundaVuelta.vertices)
+        print("El camino mas corto para Andreina es de " +
+              " "+str(pesosgdSegundaVuelta[pesosgdSegundaVuelta.__len__()-1]+(2*pesosgdSegundaVuelta.__len__()-2)))
+
+        # Guarda el peso de Andreina recorrido 2
+        gdPesos3 = pesosgdSegundaVuelta[pesosgdSegundaVuelta.__len__(
+        )-1]+(2*pesosgdSegundaVuelta.__len__()-2)
+        for i in gdSegundaVuelta.vertices:
+            # print(self.matriz[self.vertices.index(i)])
+            for a in range(grafoSegundaVuelta.matriz[grafoSegundaVuelta.vertices.index(i)].__len__()):
+                if grafoSegundaVuelta.matriz[grafoSegundaVuelta.vertices.index(i)][a] != None:
+                    grafoSegundaVuelta.matriz[grafoSegundaVuelta.vertices.index(
+                        i)][a] = 999
+
+            for a in grafoSegundaVuelta.matriz:
+                if (a[0] != None):
+                    a[0] = 99
+        print("-------------------------")
+        # JAVIER SEGUNDA VUELTA
+        gd2SegundaVuelta = grafoSegundaVuelta.DijikstraGrafo(
+            inicioJavier, fin)
+        pesosgd2SegundaVuelta = gd2SegundaVuelta.PesosDijikstra(inicioJavier)
+        print(gd2SegundaVuelta.vertices)
+        print("El camino mas corto para Javier es de " +
+              " "+str(pesosgd2SegundaVuelta[pesosgd2SegundaVuelta.__len__()-1]))
+
+        # Guarda el peso de Javier recorrido 2
+        gdPesos4 = pesosgd2SegundaVuelta[pesosgd2SegundaVuelta.__len__()-1]
+
+        if gdPesos4 > gdPesos3:
+            resta2 = gdPesos4 - gdPesos3
+            resultado2 = "Para que puedan llegar iguales Andreina debe salir " + \
+                str(resta2) + " minutos antes que Javier"
+            print("Para que puedan llegar iguales Andreina debe salir " +
+                  str(resta2) + " minutos antes que Javier")
+
+        elif gdPesos4 < gdPesos3:
+            resta2 = gdPesos3 - gdPesos4
+            resultado2 = "Para que puedan llegar iguales, Javier debe salir " + \
+                str(resta2) + " minutos antes que Andreina"
+            print("Para que puedan llegar iguales, Javier debe salir " +
+                  str(resta2) + " minutos antes que Andreina")
+        else:
+            resultado2 = "Para que puedan llegar iguales pueden salir al mismo tiempo"
+
+        print("-------RECORRIDO DEFINITIVO---------")
+        if resta2 > resta1:
+            print("El camino mas corto para Javier es de " +
+                  " "+str(gdPesos1))
+            print("El camino mas corto para Andreina es de " +
+                  " "+str(gdPesos2))
+            print(resultado1)
+        if resta2 < resta1:
+            print("El camino mas corto para Andreina es de " +
+                  " "+str(gdPesos3))
+            print("El camino mas corto para Javier es de " +
+                  " "+str(gdPesos4))
+            print(resultado2)
